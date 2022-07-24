@@ -97,7 +97,9 @@ const Contact = () => {
               sx={{ color: 'primary.main' }}
               variant="h6"
             >
-              Join 3,000+ forward-thinking companies:
+              Join
+
+              3,000+ forward-thinking companies:
             </Typography>
             <Box sx={{ pt: 2 }}>
               <img

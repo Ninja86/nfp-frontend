@@ -3,14 +3,15 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import {
   Avatar,
-  Box,
+  Box, Button,
   Card,
   CardContent,
-  CardHeader,
+  CardHeader, Chip,
   Container,
   Divider,
-  Grid,
+  Grid, IconButton,
   Link,
+  Stack,
   Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -19,16 +20,98 @@ import {DashboardLayout} from '../../../components/dashboard/dashboard-layout';
 import {
   CompanyOverview
 } from '../../../components/projects/projectInfo/company-overview';
-import {
-  CompanySummary
-} from '../../../components/projects/projectInfo/company-summary';
 import {useMounted} from '../../../hooks/use-mounted';
 import {gtm} from '../../../lib/gtm';
-import {getInitials} from '../../../utils/get-initials';
+import {useTheme} from "@mui/material/styles";
+import {grey} from '@mui/material/colors';
+import dynamic from "next/dynamic";
+import {CallMade, Share, Twitter} from "@mui/icons-material";
+
+const Header = ({logoImg, title, description, tags}) => {
+  const theme = useTheme();
+  return (
+    <Grid container direction="row" spacing={theme.spacing(1)}>
+      <Grid
+        item
+        container
+        sm={2}
+        md={2}
+        direction={'column'}
+        alignItems="center"
+        justifyContent={"start"}
+      >
+        <Grid item sx={{backgroundColor:"transparent", marginTop: theme.spacing(1)}}>
+          <Typography>
+            <Avatar
+              src={logoImg}
+              sx={{
+                background: 'transparent',
+                width: 100,
+                height: 100,
+              }}
+              variant="rounded"
+            >
+            </Avatar>
+          </Typography>
+        </Grid>
+      </Grid>
+      <Grid item sm={9} md={9} sx={{marginLeft:theme.spacing(2)}}>
+        <Typography variant="h6" align={"left"}>
+          {title}
+        </Typography>
+        <Typography
+          sx={{ mt: 1 }}
+          variant="body2"
+        >
+          {description}
+        </Typography>
+        <Stack direction={"row"} sx={{marginTop:theme.spacing(2)}} spacing={theme.spacing(1)}>
+          {tags?.map((e, idx) => {
+            return (<Chip
+              key={idx}
+              label={e}
+              variant="outlined"
+              sx={{color:grey[600]}}
+            />)
+          })}
+        </Stack>
+      </Grid>
+    </Grid>
+  )
+}
+
+const CompanySummary = (linkInfos) => {
+  return (
+    <Card>
+      <CardContent>
+        <Stack
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          spacing={2}
+        >
+          <Button startIcon={<CallMade />} size={"small"} sx={{borderRadius:4}}
+                  variant="contained">
+            Visit website
+          </Button>
+          <Button variant="text" startIcon={<Twitter />} size={"small"} sx={{borderRadius:4}}>
+            Twitter
+          </Button>
+          <Button variant="outlined" startIcon={<Share />} size={"small"} sx={{borderRadius:4}}>
+            Share
+          </Button>
+        </Stack>
+      </CardContent>
+    </Card>
+  )
+}
 
 const CompanyDetails = () => {
   const isMounted = useMounted();
   const [projectInfo, setProjectInfo] = useState(null);
+  const theme = useTheme();
+  const Chart = dynamic(() => import("../../../components/projects/ProjectChart"), {
+    ssr: false
+  });
 
   useEffect(() => {
     gtm.push({ event: 'page_view' });
@@ -37,7 +120,6 @@ const CompanyDetails = () => {
   const getProjectInfo = useCallback(async () => {
     try {
       const data = await projectInfoApi.getProjectInfo();
-
       if (isMounted()) {
         const pageName = window.location.pathname.trim().split('/').slice(-1).pop().toUpperCase();
         console.log('pageName: ' + pageName);
@@ -69,10 +151,11 @@ const CompanyDetails = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 4,
+          // backgroundColor:"#00ff"
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" style={{backgroundColor:"transparent"}}>
           <Box sx={{ mb: 4 }}>
             <NextLink
               href="/projects"
@@ -108,32 +191,23 @@ const CompanyDetails = () => {
                 <CardHeader
                   disableTypography
                   title={(
-                    <Box sx={{ display: 'flex' }}>
-                      <Avatar
-                        src={projectInfo.logo}
-                        sx={{
-                          background: 'transparent',
-                          mr: 2
-                        }}
-                        variant="rounded"
-                      >
-                        {getInitials(projectInfo.title)}
-                      </Avatar>
-                      <div>
-                        <Typography variant="h6">
-                          {projectInfo.title}
-                        </Typography>
-                        <Typography
-                          sx={{ mt: 1 }}
-                          variant="body2"
-                        >
-                          {projectInfo.shortDescription}
-                        </Typography>
-                      </div>
-                    </Box>
+                    <Header
+                      logoImg={projectInfo.logo}
+                      title={projectInfo.title}
+                      description={projectInfo.shortDescription}
+                      tags={projectInfo.tags}
+                    />
                   )}
                 />
                 <Divider />
+                {/*<CardContent>*/}
+                  {/*<Stack sx={{marginTop:theme.spacing(0)}}>*/}
+                    {/*<Typography variant="h6" align={"left"}>*/}
+                    {/*  {projectInfo.symbol}*/}
+                    {/*</Typography>*/}
+                    {/*<Chart symbol={projectInfo.symbol}/>*/}
+                  {/*</Stack>*/}
+                {/*</CardContent>*/}
                 <CardContent>
                   <CompanyOverview projectInfo={projectInfo} />
                 </CardContent>
