@@ -96,6 +96,7 @@ const CompanySummary = (linkInfos) => {
           <Button variant="text" startIcon={<Twitter />} size={"small"} sx={{borderRadius:4}}>
             Twitter
           </Button>
+          <Divider />
           <Button variant="outlined" startIcon={<Share />} size={"small"} sx={{borderRadius:4}}>
             Share
           </Button>
@@ -200,14 +201,14 @@ const CompanyDetails = () => {
                   )}
                 />
                 <Divider />
-                {/*<CardContent>*/}
-                  {/*<Stack sx={{marginTop:theme.spacing(0)}}>*/}
-                    {/*<Typography variant="h6" align={"left"}>*/}
-                    {/*  {projectInfo.symbol}*/}
-                    {/*</Typography>*/}
-                    {/*<Chart symbol={projectInfo.symbol}/>*/}
-                  {/*</Stack>*/}
-                {/*</CardContent>*/}
+                <CardContent>
+                  <Stack sx={{marginTop:theme.spacing(0)}}>
+                    <Typography variant="h6" align={"left"}>
+                      {projectInfo.symbol}
+                    </Typography>
+                    <Chart symbol={projectInfo.symbol}/>
+                  </Stack>
+                </CardContent>
                 <CardContent>
                   <CompanyOverview projectInfo={projectInfo} />
                 </CardContent>
