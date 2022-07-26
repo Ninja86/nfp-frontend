@@ -23,9 +23,9 @@ import {
 import {useMounted} from '../../../hooks/use-mounted';
 import {gtm} from '../../../lib/gtm';
 import {useTheme} from "@mui/material/styles";
-import {grey} from '@mui/material/colors';
+import {grey, red} from '@mui/material/colors';
 import dynamic from "next/dynamic";
-import {CallMade, Share, Twitter} from "@mui/icons-material";
+import {CallMade, Share, Twitter, Email, GitHub, Telegram} from "@mui/icons-material";
 
 const Header = ({logoImg, title, description, tags}) => {
   const theme = useTheme();
@@ -80,27 +80,51 @@ const Header = ({logoImg, title, description, tags}) => {
   )
 }
 
-const CompanySummary = (linkInfos) => {
+const CompanySummary = () => {
   return (
     <Card>
+      {/*<CardContent>*/}
+      {/*  <Stack*/}
+      {/*    justifyContent="flex-start"*/}
+      {/*    alignItems="flex-start"*/}
+      {/*  >*/}
+      {/*  </Stack>*/}
+      {/*</CardContent>*/}
       <CardContent>
         <Stack
           justifyContent="flex-start"
           alignItems="flex-start"
-          spacing={2}
+          sx={{marginBottom:4}}
         >
-          <Button startIcon={<CallMade />} size={"small"} sx={{borderRadius:4}}
+          <Button startIcon={<CallMade />} sx={{borderRadius:4}}
                   variant="contained">
             Visit website
+          </Button>
+        </Stack>
+        <Stack
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          spacing={1}
+        >
+          <Button variant="text" startIcon={<Email />} size={"small"} sx={{borderRadius:4}}>
+            Email
           </Button>
           <Button variant="text" startIcon={<Twitter />} size={"small"} sx={{borderRadius:4}}>
             Twitter
           </Button>
-          <Divider />
-          <Button variant="outlined" startIcon={<Share />} size={"small"} sx={{borderRadius:4}}>
-            Share
+          <Button variant="text" startIcon={<Telegram />} size={"small"} sx={{borderRadius:4}}>
+            Telegram
+          </Button>
+          <Button variant="text" startIcon={<GitHub />} size={"small"} sx={{borderRadius:4}}>
+            Github
           </Button>
         </Stack>
+      </CardContent>
+      <Divider />
+      <CardContent>
+        <Button variant="outlined" startIcon={<Share />} sx={{borderRadius:4}}>
+          Share
+        </Button>
       </CardContent>
     </Card>
   )
@@ -202,14 +226,40 @@ const CompanyDetails = () => {
                 />
                 <Divider />
                 <CardContent>
-                  <Stack sx={{marginTop:theme.spacing(0)}}>
-                    <Typography variant="h6" align={"left"}>
-                      {projectInfo.symbol}
-                    </Typography>
-                    <Chart symbol={projectInfo.symbol}/>
+                  <Stack>
+                    <Stack
+                      sx={{marginLeft: 2}}
+                      direction={"row"}
+                      spacing={1}
+                      justifyContent="flex-start"
+                      alignItems="center">
+                      <Avatar
+                        src={projectInfo.logo}
+                        sx={{
+                          background: 'transparent',
+                          width: 32,
+                          height: 32,
+                        }}
+                        variant="rounded"
+                      />
+                      <Typography variant="h6" align={"left"}>
+                        {projectInfo.symbol}
+                      </Typography>
+                    </Stack>
+                    <Stack direction={"row"} spacing={1} sx={{marginLeft: 2, marginTop: 1}} alignItems="flex-start">
+                      <Typography variant="body1" align={"left"}>
+                        $0.406218
+                      </Typography>
+                      <Typography variant="body2" align={"left"} sx={{color: red[500]}}>
+                        -3.2%
+                      </Typography>
+                    </Stack>
+                    <Box component="span" sx={{ marginTop: 5 }}>
+                      <Chart symbol={projectInfo.symbol}/>
+                    </Box>
                   </Stack>
                 </CardContent>
-                <CardContent>
+                <CardContent sx={{marginTop:-5}}>
                   <CompanyOverview projectInfo={projectInfo} />
                 </CardContent>
               </Card>
