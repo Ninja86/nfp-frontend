@@ -185,8 +185,15 @@ The platform is powered by the Stacks token (STX), which is used for fueling the
 The platform was formerly known as Blockstack, but was rebranded to Stacks in Q4 2020 in order to "separate the ecosystem and open source project from Blockstack PBC" — the company that built the original protocols.
 
 The mainnet for Stacks 2.0 launched in January 2021.`,
-        website: "https://stacks.co",
-        tags: ["DeFi", "NFT", "BTC"]
+        tags: ["DeFi", "NFT", "BTC"],
+        links: {
+          website: "https://stacks.co",
+          github: "https://github.com/stacks-network",
+          discord: "https://discord.com/invite/5DJaBrf",
+          twitter: "https://twitter.com/Stacks",
+          telegram: "https://t.me/StacksChat",
+          reddit: "https://www.reddit.com/r/stacks/",
+        }
       }
     });
   }

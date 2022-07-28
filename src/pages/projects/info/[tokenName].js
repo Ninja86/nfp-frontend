@@ -9,7 +9,7 @@ import {
   CardHeader, Chip,
   Container,
   Divider,
-  Grid, IconButton,
+  Grid,
   Link,
   Stack,
   Typography
@@ -22,10 +22,12 @@ import {
 } from '../../../components/projects/projectInfo/company-overview';
 import {useMounted} from '../../../hooks/use-mounted';
 import {gtm} from '../../../lib/gtm';
-import {useTheme} from "@mui/material/styles";
+import {styled, useTheme} from "@mui/material/styles";
 import {grey, red} from '@mui/material/colors';
 import dynamic from "next/dynamic";
-import {CallMade, Share, Twitter, Email, GitHub, Telegram} from "@mui/icons-material";
+import {CallMade, Share, Twitter, Reddit, GitHub, Telegram} from "@mui/icons-material";
+import {faDiscord} from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Header = ({logoImg, title, description, tags}) => {
   const theme = useTheme();
@@ -80,24 +82,71 @@ const Header = ({logoImg, title, description, tags}) => {
   )
 }
 
-const CompanySummary = () => {
+
+// const LinkIcon = (keyName) => {
+
+// }
+
+const CompanySummary = ({links}) => {
+  useEffect(() => {
+    console.log("aaa");
+    // console.log(links);
+    console.log(Object.keys(links));
+    // links.map(e => {
+    //   Object.key
+    // })
+  }, []);
+
+  const linkIconKeys = [
+    "twitter", "reddit", "discord", "github", "telegram",
+  ];
+
+  const getLinkIcon = (keyName) => {
+    switch (keyName) {
+      case "twitter":
+        return <Twitter/>
+      case "reddit":
+        return <Reddit/>
+      case "discord":
+        return <FontAwesomeIcon icon={faDiscord} />
+      case "github":
+        return <GitHub />
+      case "telegram":
+        return <Telegram />
+    }
+    return null;
+  }
+
+  const getLinkButton = ({keyName, href}) => {
+    if (!linkIconKeys.includes(keyName)) return null
+    return (<Button
+      variant="text" startIcon={getLinkIcon(keyName)} size={"small"} sx={{borderRadius:4}}
+      onClick={(e)=>{
+        e.preventDefault();
+        window.location.href=href;
+      }}
+    >
+      {keyName?.toUpperCase()}
+    </Button>)
+  };
+
   return (
     <Card>
-      {/*<CardContent>*/}
-      {/*  <Stack*/}
-      {/*    justifyContent="flex-start"*/}
-      {/*    alignItems="flex-start"*/}
-      {/*  >*/}
-      {/*  </Stack>*/}
-      {/*</CardContent>*/}
       <CardContent>
         <Stack
           justifyContent="flex-start"
           alignItems="flex-start"
           sx={{marginBottom:4}}
         >
-          <Button startIcon={<CallMade />} sx={{borderRadius:4}}
-                  variant="contained">
+          <Button
+            startIcon={<CallMade />}
+            sx={{borderRadius:4}}
+            variant="contained"
+            onClick={(e)=>{
+              e.preventDefault();
+              window.location.href=links.website;
+            }}
+          >
             Visit website
           </Button>
         </Stack>
@@ -106,18 +155,9 @@ const CompanySummary = () => {
           alignItems="flex-start"
           spacing={1}
         >
-          <Button variant="text" startIcon={<Email />} size={"small"} sx={{borderRadius:4}}>
-            Email
-          </Button>
-          <Button variant="text" startIcon={<Twitter />} size={"small"} sx={{borderRadius:4}}>
-            Twitter
-          </Button>
-          <Button variant="text" startIcon={<Telegram />} size={"small"} sx={{borderRadius:4}}>
-            Telegram
-          </Button>
-          <Button variant="text" startIcon={<GitHub />} size={"small"} sx={{borderRadius:4}}>
-            Github
-          </Button>
+          {Object.keys(links).map(key => {
+            return getLinkButton({keyName: key, href: links[key]})
+          })}
         </Stack>
       </CardContent>
       <Divider />
@@ -148,6 +188,7 @@ const CompanyDetails = () => {
       if (isMounted()) {
         const pageName = window.location.pathname.trim().split('/').slice(-1).pop().toUpperCase();
         console.log('pageName: ' + pageName);
+        console.log(data[pageName].links);
         setProjectInfo(data[pageName]);
       }
     } catch (err) {
@@ -269,7 +310,7 @@ const CompanyDetails = () => {
               xs={12}
               lg={4}
             >
-              <CompanySummary projectInfo={projectInfo} />
+              <CompanySummary links={projectInfo.links} />
             </Grid>
           </Grid>
         </Container>
