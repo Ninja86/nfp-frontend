@@ -28,6 +28,8 @@ import dynamic from "next/dynamic";
 import {CallMade, Share, Twitter, Reddit, GitHub, Telegram} from "@mui/icons-material";
 import {faDiscord} from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useRouter} from "next/router";
+import {api} from "../../../api/apiClient";
 
 const Header = ({logoImg, title, description, tags}) => {
   const theme = useTheme();
@@ -82,20 +84,7 @@ const Header = ({logoImg, title, description, tags}) => {
   )
 }
 
-
-// const LinkIcon = (keyName) => {
-
-// }
-
 const CompanySummary = ({links}) => {
-  useEffect(() => {
-    console.log("aaa");
-    // console.log(links);
-    console.log(Object.keys(links));
-    // links.map(e => {
-    //   Object.key
-    // })
-  }, []);
 
   const linkIconKeys = [
     "twitter", "reddit", "discord", "github", "telegram",
@@ -173,8 +162,11 @@ const CompanySummary = ({links}) => {
 const CompanyDetails = () => {
   const isMounted = useMounted();
   const [projectInfo, setProjectInfo] = useState(null);
-  const theme = useTheme();
-  const Chart = dynamic(() => import("../../../components/projects/ProjectChart"), {
+  const [series, setSeries] = useState([])
+  const [lastPrice, setLastPrice] = useState("");
+  const [dayChangeRateByPercentage, setDayChangeRateByPercentage] = useState("");
+
+  const Chart = dynamic(() => import("../../../components/projects/ProjectChart2"), {
     ssr: false
   });
 
@@ -187,17 +179,49 @@ const CompanyDetails = () => {
       const data = await projectInfoApi.getProjectInfo();
       if (isMounted()) {
         const pageName = window.location.pathname.trim().split('/').slice(-1).pop().toUpperCase();
-        console.log('pageName: ' + pageName);
-        console.log(data[pageName].links);
-        setProjectInfo(data[pageName]);
+        setProjectInfo(data[pageName.toUpperCase()]);
+        return data[pageName.toUpperCase()];
       }
+      return null;
     } catch (err) {
       console.error(err);
     }
   }, [isMounted]);
 
+  const getPriceHistory = async (symbol) => {
+    const res = await api.get(`/price/history?symbol=${symbol.toUpperCase()}`)
+    return res?.data.data.map(
+      history => {
+        let timestamp = Date.parse(history.createdAt)
+        return [timestamp, history.price]
+      }
+    );
+  }
+
   useEffect(() => {
-      getProjectInfo();
+    api.get(`/project`)
+      .then(response => {
+        const pageName = window.location.pathname.trim().split('/').slice(-1).pop().toUpperCase();
+        const projInfo = response.data?.filter(e => e.project.toUpperCase() === pageName)[0];
+        if (projInfo) {
+          console.log(projInfo);
+          setLastPrice(projInfo.price);
+          setDayChangeRateByPercentage(projInfo.dayChangeRateByPercentage);
+        }
+      })
+  }, [])
+
+  useEffect(() => {
+      (async() => {
+        const proj = await getProjectInfo();
+        if (!proj)
+          return;
+        const data = await getPriceHistory(proj.symbol);
+        setSeries([{
+          name: 'Price($)',
+          data
+        }]);
+      })();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
@@ -218,7 +242,6 @@ const CompanyDetails = () => {
         sx={{
           flexGrow: 1,
           py: 4,
-          // backgroundColor:"#00ff"
         }}
       >
         <Container maxWidth="lg" style={{backgroundColor:"transparent"}}>
@@ -289,14 +312,14 @@ const CompanyDetails = () => {
                     </Stack>
                     <Stack direction={"row"} spacing={1} sx={{marginLeft: 2, marginTop: 1}} alignItems="flex-start">
                       <Typography variant="body1" align={"left"}>
-                        $0.406218
+                        ${lastPrice}
                       </Typography>
                       <Typography variant="body2" align={"left"} sx={{color: red[500]}}>
-                        -3.2%
+                        {dayChangeRateByPercentage}%
                       </Typography>
                     </Stack>
                     <Box component="span" sx={{ marginTop: 5 }}>
-                      <Chart symbol={projectInfo.symbol}/>
+                      <Chart series={series}/>
                     </Box>
                   </Stack>
                 </CardContent>
