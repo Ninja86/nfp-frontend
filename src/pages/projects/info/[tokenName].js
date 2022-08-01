@@ -9,9 +9,9 @@ import {
   CardHeader, Chip,
   Container,
   Divider,
-  Grid,
+  Grid, IconButton,
   Link,
-  Stack,
+  Stack, Tooltip,
   Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -22,14 +22,14 @@ import {
 } from '../../../components/projects/projectInfo/company-overview';
 import {useMounted} from '../../../hooks/use-mounted';
 import {gtm} from '../../../lib/gtm';
-import {styled, useTheme} from "@mui/material/styles";
-import {grey, red} from '@mui/material/colors';
-import dynamic from "next/dynamic";
+import {useTheme} from "@mui/material/styles";
+import {green, grey, red} from '@mui/material/colors';
 import {CallMade, Share, Twitter, Reddit, GitHub, Telegram} from "@mui/icons-material";
 import {faDiscord} from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {useRouter} from "next/router";
 import {api} from "../../../api/apiClient";
+import dynamic from "next/dynamic";
+import {ContentShareDialog} from "../../../components/dashboard/conent-share-dialog";
 
 const Header = ({logoImg, title, description, tags}) => {
   const theme = useTheme();
@@ -83,6 +83,31 @@ const Header = ({logoImg, title, description, tags}) => {
     </Grid>
   )
 }
+
+const ContentShareButton = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenSearchDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseSearchDialog = () => {
+    setOpenDialog(false);
+  };
+
+  return (
+    <>
+      <Button variant="outlined" startIcon={<Share />} sx={{borderRadius:4}}
+              onClick={handleOpenSearchDialog}>
+        Share
+      </Button>
+      <ContentShareDialog
+        onClose={handleCloseSearchDialog}
+        open={openDialog}
+      />
+    </>
+  );
+};
 
 const CompanySummary = ({links}) => {
 
@@ -151,9 +176,7 @@ const CompanySummary = ({links}) => {
       </CardContent>
       <Divider />
       <CardContent>
-        <Button variant="outlined" startIcon={<Share />} sx={{borderRadius:4}}>
-          Share
-        </Button>
+        <ContentShareButton />
       </CardContent>
     </Card>
   )
@@ -229,6 +252,10 @@ const CompanyDetails = () => {
   if (!projectInfo) {
     return null;
   }
+
+  const getChangeRateByPercentageColor = (percent) => {
+    return percent < 0 ? red[500] : green[500];
+  };
 
   return (
     <>
@@ -314,8 +341,8 @@ const CompanyDetails = () => {
                       <Typography variant="body1" align={"left"}>
                         ${lastPrice}
                       </Typography>
-                      <Typography variant="body2" align={"left"} sx={{color: red[500]}}>
-                        {dayChangeRateByPercentage}%
+                      <Typography variant="body2" align={"left"} sx={{color: getChangeRateByPercentageColor(dayChangeRateByPercentage)}}>
+                        {dayChangeRateByPercentage < 0 ? "-" : "+" + dayChangeRateByPercentage}%
                       </Typography>
                     </Stack>
                     <Box component="span" sx={{ marginTop: 5 }}>
