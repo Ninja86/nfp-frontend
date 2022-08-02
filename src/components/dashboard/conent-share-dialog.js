@@ -38,14 +38,14 @@ import {
   TwitterIcon,
   LinkedinIcon,
   WhatsappIcon,
-  PinterestIcon,
+  PinterestIcon, TelegramIcon, RedditIcon, FacebookMessengerIcon, FacebookMessengerShareButton,
 } from "react-share";
 
-const WithSubtitle = Component => {
+const WithSubtitle = ({Component, title}) => {
   return (
     <Stack direction="column">
-      {/*<Component />*/}
-      <Typography variant="caption" display="block">{"FACEBOOK"}</Typography>
+      <Component />
+      <Typography variant="caption" display="block">Facebook</Typography>
     </Stack>
   )
 };
@@ -94,15 +94,70 @@ export const ContentShareDialog = (props) => {
       <DialogContent>
         <Stack direction="row" spacing={2} justifyContent="center"
                alignItems="center">
-          <WithSubtitle Component={
-            <FacebookShareButton quote={"Steadylearner Website"}>
-              <FacebookIcon
-                borderRadius={32}
-                size={32}
-              />
-            </FacebookShareButton>}
+          <Stack direction="column">
+            <FacebookShareButton
+              url={"https://app.nfpstudio.io/"}
+              title={"NFP STUDIO"}
+              quote={"NFP STUDIO"}
+              hashtag="#nfp"
             >
-          </WithSubtitle>
+              <FacebookIcon
+                borderRadius={48}
+                size={48}
+              />
+            </FacebookShareButton>
+            <Typography alignSelf={"center"} variant="caption" display="block">Facebook</Typography>
+          </Stack>
+          <Stack direction="column">
+            <WhatsappShareButton
+              url={"https://app.nfpstudio.io/"}
+              title={"NFP STUDIO"}
+              separator=":: "
+            >
+              <WhatsappIcon
+                borderRadius={48}
+                size={48}
+              />
+            </WhatsappShareButton>
+            <Typography alignSelf={"center"} variant="caption" display="block">WhatsApp</Typography>
+          </Stack>
+          <Stack direction="column">
+            <TwitterShareButton
+              url={"https://app.nfpstudio.io/"}
+              title={"NFP STUDIO"}
+              hashtags={["nfp"]}
+            >
+              <TwitterIcon
+                borderRadius={48}
+                size={48}
+              />
+            </TwitterShareButton>
+            <Typography alignSelf={"center"} variant="caption" display="block">Twitter</Typography>
+          </Stack>
+          <Stack direction="column">
+            <TelegramShareButton
+              url={"https://app.nfpstudio.io/"}
+              title={"NFP STUDIO"}
+            >
+              <TelegramIcon
+                borderRadius={48}
+                size={48}
+              />
+            </TelegramShareButton>
+            <Typography alignSelf={"center"} variant="caption" display="block">Telegram</Typography>
+          </Stack>
+          <Stack direction="column">
+            <RedditShareButton
+              url={"https://app.nfpstudio.io/"}
+              title={"NFP STUDIO"}
+            >
+              <RedditIcon
+                borderRadius={48}
+                size={48}
+              />
+            </RedditShareButton>
+            <Typography alignSelf={"center"} variant="caption" display="block">Reddit</Typography>
+          </Stack>
         </Stack>
       </DialogContent>
     </Dialog>

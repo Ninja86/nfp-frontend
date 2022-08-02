@@ -187,7 +187,7 @@ const CompanyDetails = () => {
   const [projectInfo, setProjectInfo] = useState(null);
   const [series, setSeries] = useState([])
   const [lastPrice, setLastPrice] = useState("");
-  const [dayChangeRateByPercentage, setDayChangeRateByPercentage] = useState("");
+  const [dayChangeRateByPercentage, setDayChangeRateByPercentage] = useState(0);
 
   const Chart = dynamic(() => import("../../../components/projects/ProjectChart2"), {
     ssr: false
@@ -342,7 +342,7 @@ const CompanyDetails = () => {
                         ${lastPrice}
                       </Typography>
                       <Typography variant="body2" align={"left"} sx={{color: getChangeRateByPercentageColor(dayChangeRateByPercentage)}}>
-                        {dayChangeRateByPercentage < 0 ? "-" : "+" + dayChangeRateByPercentage}%
+                        {dayChangeRateByPercentage}%
                       </Typography>
                     </Stack>
                     <Box component="span" sx={{ marginTop: 5 }}>
